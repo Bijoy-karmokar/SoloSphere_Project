@@ -4,11 +4,12 @@ import { NavLink } from "react-router";
 
 const Navbar = () => {
   return (
-    <div className="navbar bg-base-100 shadow-sm">
-      <div className="flex-1">
-        <div className="flex items-center">
+    <div className=" bg-base-100 shadow-sm">
+     <div className="navbar w-10/12 mx-auto">
+         <div className="flex-1">
+        <div className="flex items-center gap-1">
           <img className="w-10" src={logoImg} alt="" />
-          <a className="text-3xl font-bold">SoloSphere</a>
+          <a className="text-4xl font-bold">SoloSphere</a>
         </div>
       </div>
       <div className="flex-none">
@@ -61,6 +62,7 @@ const Navbar = () => {
           </ul>
         </div>
       </div>
+     </div>
     </div>
   );
 };
