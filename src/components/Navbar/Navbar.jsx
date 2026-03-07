@@ -21,7 +21,7 @@ const Navbar = () => {
                   <NavLink className={({isActive})=>isActive? "text-lg text-blue-600 font-medium" : "text-lg font-medium"} to="/">Home</NavLink>
                 </li>
                 <li>
-                  <NavLink className={"btn btn-primary btn-outline"} to="/login">Login</NavLink>
+                  <NavLink to="/login" className={"btn btn-primary btn-outline"} >Login</NavLink>
                 </li>
               </ul>
             </div>
