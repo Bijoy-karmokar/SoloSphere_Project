@@ -6,7 +6,7 @@ import signUp from "../../assets/Register.json"
 
 const Register = () => {
     return (
- <div className="flex flex-col md:flex-row items-center w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl my-8">
+    <form className="flex flex-col md:flex-row items-center w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl my-8">
       <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
       <Lottie animationData={signUp}></Lottie>
       </div>
@@ -141,7 +141,7 @@ const Register = () => {
           <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
         </div>
       </div>
-    </div>
+    </form>
     );
 };
 
