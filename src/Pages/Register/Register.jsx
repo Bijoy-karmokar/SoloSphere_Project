@@ -3,15 +3,41 @@ import logoImg from "../../assets/logo.png";
 import { Link } from 'react-router';
 import Lottie from 'lottie-react';
 import signUp from "../../assets/Register.json"
+import useAuth from '../../hooks/useAuth';
 
 const Register = () => {
+    const {createUser,signInGoogle} = useAuth();
+    // console.log(user,createUser);
+    
+      const handleRegister =(e)=>{
+        e.preventDefault();
+        const form= e.target;
+        const formData = new FormData(form);
+       const {email,password} = Object.fromEntries(formData.entries());
+      //  console.log(email,password);
+       createUser(email,password)
+       .then(res=>{
+        const user= res.user;
+        console.log(user);
+      })
+      .catch(error=>console.log(error)
+      )
+      }
+      const handleGoogle =()=>{
+           signInGoogle()
+           .then(res=>{
+            const user = res.user;
+            console.log(user);
+           }).catch(error=>console.log(error)
+           )
+      }
     return (
-    <form className="flex flex-col md:flex-row items-center w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl my-8">
+    <div className="flex flex-col md:flex-row items-center w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl my-8">
       <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
       <Lottie animationData={signUp}></Lottie>
       </div>
 
-      <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
+      <form onSubmit={handleRegister} className="w-full px-6 py-8 md:px-8 lg:w-1/2">
         <div className="flex justify-center mx-auto">
           <img className="w-auto h-7 sm:h-8" src={logoImg} alt=""/>
         </div>
@@ -20,7 +46,7 @@ const Register = () => {
           Welcome back!
         </p>
 
-        <button
+        <button onClick={handleGoogle}
           className="flex items-center justify-center w-full mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
         >
           <div className="px-4 py-2">
@@ -65,13 +91,13 @@ const Register = () => {
         <div className="mt-4">
           <label
             className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-            for="LoggingEmailAddress"
           >
            Name
           </label>
           <input
             id="name"
             name='name'
+            placeholder='Enter your name'
             className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
             type="text"
           />
@@ -79,13 +105,14 @@ const Register = () => {
         <div className="mt-4">
           <label
             className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-            for="LoggingEmailAddress"
+          
           >
            PhotoURL
           </label>
           <input
             id="photo"
             name='photo'
+            placeholder='Enter your PhotoURL'
             className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
             type="text"
           />
@@ -93,12 +120,12 @@ const Register = () => {
         <div className="mt-4">
           <label
             className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-            for="LoggingEmailAddress"
+            
           >
             Email Address
           </label>
           <input
-            id="LoggingEmailAddress"
+            id="email"
             name='email'
             className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
             type="email"
@@ -109,7 +136,6 @@ const Register = () => {
           <div className="flex justify-between">
             <label
               className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-              for="loggingPassword"
             >
               Password
             </label>
@@ -140,8 +166,8 @@ const Register = () => {
 
           <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
     );
 };
 

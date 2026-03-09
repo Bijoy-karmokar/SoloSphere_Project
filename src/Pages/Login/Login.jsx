@@ -5,12 +5,20 @@ import SignIn from '../../assets/LogIn.json'
 import Lottie from "lottie-react";
 
 const Login = () => {
+  const handleLogin =(e)=>{
+        e.preventDefault();
+        const form= e.target;
+        const formData = new FormData(form);
+       const data = Object.fromEntries(formData.entries());
+       console.log(data);
+       
+      }
   return (
-    <form className="flex flex-col md:flex-row items-center w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl my-8">
+    <div className="flex flex-col md:flex-row items-center w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl my-8">
       <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
         <Lottie animationData={SignIn}></Lottie>
       </div>
-      <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
+      <form onSubmit={handleLogin} className="w-full px-6 py-8 md:px-8 lg:w-1/2">
         <div className="flex justify-center mx-auto">
           <img className="w-auto h-7 sm:h-8" src={logoImg} alt=""/>
         </div>
@@ -117,8 +125,8 @@ const Login = () => {
 
           <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
     
   );
 };
