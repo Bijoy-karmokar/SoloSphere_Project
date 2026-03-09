@@ -1,17 +1,47 @@
 import React from "react";
 import logoImg from "../../assets/logo.png";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import SignIn from '../../assets/LogIn.json'
 import Lottie from "lottie-react";
+import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const {signInUser,signInGoogle} = useAuth();
+  const navigate = useNavigate();
+
   const handleLogin =(e)=>{
         e.preventDefault();
         const form= e.target;
         const formData = new FormData(form);
-       const data = Object.fromEntries(formData.entries());
-       console.log(data);
-       
+       const {email,password} = Object.fromEntries(formData.entries());
+      //  console.log(data);
+       signInUser(email,password)
+       .then(res=>{
+        const user = res.user;
+        if(user){
+              toast.success("Google signin successfully.")
+            }
+            navigate('/');
+       })
+       .catch(error=>{
+        if(error){
+              toast.error("Somthing went wrong!")
+            }
+       })
+      }
+      const handleGoogle=()=>{
+           signInGoogle()
+           .then(res=>{
+            const user = res.user;
+            if(user){
+              toast.success("Google signin successfully.")
+            }
+           }).catch(error=>{
+            if(error){
+              toast.error("Somthing went wrong!")
+            }
+           })
       }
   return (
     <div className="flex flex-col md:flex-row items-center w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl my-8">
@@ -27,7 +57,7 @@ const Login = () => {
           Welcome back!
         </p>
 
-        <button
+        <button onClick={handleGoogle}
           className="flex items-center justify-center w-full mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
         >
           <div className="px-4 py-2">

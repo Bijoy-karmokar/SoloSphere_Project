@@ -1,26 +1,44 @@
 import React from 'react';
 import logoImg from "../../assets/logo.png";
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import Lottie from 'lottie-react';
 import signUp from "../../assets/Register.json"
 import useAuth from '../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const Register = () => {
-    const {createUser,signInGoogle} = useAuth();
+  const navigate = useNavigate();
+    const {createUser,signInGoogle,updateUser} = useAuth();
+
     // console.log(user,createUser);
     
       const handleRegister =(e)=>{
         e.preventDefault();
         const form= e.target;
         const formData = new FormData(form);
-       const {email,password} = Object.fromEntries(formData.entries());
+       const {name,photo,email,password} = Object.fromEntries(formData.entries());
       //  console.log(email,password);
        createUser(email,password)
        .then(res=>{
         const user= res.user;
-        console.log(user);
+        // console.log(user);
+        if(user){
+          updateUser(name,photo)
+          .then(()=>{
+            toast.success("Sign up successfully.")
+          }).catch(error=>{
+            if(error){
+              toast.error("Profile update failed!");
+            }
+          })
+        }
+        navigate('/');
       })
-      .catch(error=>console.log(error)
+      .catch(error=>{
+        if(error){
+          toast.error("Something went wrong!")
+        }
+      }
       )
       }
       const handleGoogle =()=>{

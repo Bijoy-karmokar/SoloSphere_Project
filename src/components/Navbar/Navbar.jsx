@@ -2,10 +2,24 @@ import React from "react";
 import logoImg from "../../assets/logo.png";
 import { NavLink } from "react-router";
 import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 
 const Navbar = () => {
-  const {user} = useAuth();
+  const {user,logOut} = useAuth();
+  // console.log(updateUser);
+
+  
+  const handleLogOut=()=>{
+    logOut()
+    .then(()=>{
+      toast.success("LogOut successfully.")
+    }).catch(error=>{
+      if(error){
+        toast.error("Something went wrong!")
+      }
+    })
+  }
   return (
     <div className="bg-base-100 shadow-sm">
       <div className="navbar w-10/12 mx-auto">
@@ -15,7 +29,6 @@ const Navbar = () => {
             <a className="text-4xl font-bold">SoloSphere</a>
           </div>
         </div>
-
         <div className="flex-none">
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button">
@@ -33,34 +46,30 @@ const Navbar = () => {
                       Home
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink
-                      to="/login"
-                      className="btn btn-primary btn-outline"
-                    >
-                      Login
-                    </NavLink>
-                  </li>
                 </ul>
               </div>
             </div>
           </div>
 
-          <div className="dropdown dropdown-end">
-            <div
+          <div className="dropdown dropdown-end z-50">
+            {
+              user ? <>
+              
+              <div
               tabIndex={0}
               role="button"
-              className="btn btn-ghost btn-circle avatar"
+              title={user.displayName}
+              className="btn btn-ghost btn-circle avatar ml-2"
             >
               <div className="w-10 rounded-full">
                 <img
                   alt="User"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  src={user.photoURL}
                 />
               </div>
             </div>
 
-            <ul
+<ul
               tabIndex={-1}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
@@ -77,9 +86,19 @@ const Navbar = () => {
                 <NavLink to="/bid-request">Bid Requests</NavLink>
               </li>
               <li>
-                <button className="text-lg font-medium">Logout</button>
+                <button onClick={handleLogOut} className="text-lg font-medium">Logout</button>
               </li>
             </ul>
+              </> :  <li>
+                    <NavLink
+                      to="/login"
+                      className="btn btn-primary btn-outline ml-3"
+                    >
+                      Login
+                    </NavLink>
+                  </li>
+            }
+
           </div>
         </div>
       </div>
