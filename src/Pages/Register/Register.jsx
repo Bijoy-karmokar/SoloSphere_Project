@@ -1,6 +1,6 @@
 import React from 'react';
 import logoImg from "../../assets/logo.png";
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import Lottie from 'lottie-react';
 import signUp from "../../assets/Register.json"
 import useAuth from '../../hooks/useAuth';
@@ -8,8 +8,9 @@ import toast from 'react-hot-toast';
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
     const {createUser,signInGoogle,updateUser} = useAuth();
-
+ const from = location.state || '/';
     // console.log(user,createUser);
     
       const handleRegister =(e)=>{
@@ -32,7 +33,7 @@ const Register = () => {
             }
           })
         }
-        navigate('/');
+        navigate(from,{replace:true});
       })
       .catch(error=>{
         if(error){

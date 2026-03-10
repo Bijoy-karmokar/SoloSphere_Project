@@ -1,6 +1,6 @@
 import React from "react";
 import logoImg from "../../assets/logo.png";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import SignIn from '../../assets/LogIn.json'
 import Lottie from "lottie-react";
 import useAuth from "../../hooks/useAuth";
@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 const Login = () => {
   const {signInUser,signInGoogle} = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state || '/';
 
   const handleLogin =(e)=>{
         e.preventDefault();
@@ -22,7 +24,7 @@ const Login = () => {
         if(user){
               toast.success("Google signin successfully.")
             }
-            navigate('/');
+            navigate(from,{replace:true});
        })
        .catch(error=>{
         if(error){
