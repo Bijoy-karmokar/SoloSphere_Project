@@ -8,6 +8,7 @@ import axios from "axios";
 import MyBids from "../Pages/MyBids/MyBids";
 import ErrorPage from "../Pages/ErrorPage";
 import AddJob from "../components/JobRelated/AddJob";
+import MyPostedJobs from "../components/JobRelated/MyPostedJobs";
 
 
 const router = createBrowserRouter([
@@ -23,6 +24,11 @@ const router = createBrowserRouter([
             {
                path:"/add-job",
                Component:AddJob
+            },
+            {
+               path:"/my-posted-jobs",
+               loader:()=>axios(`${import.meta.env.VITE_API_KEY}/jobs`),
+               Component:MyPostedJobs
             },
             {
                 path:"/login",
