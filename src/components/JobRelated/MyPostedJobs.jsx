@@ -1,11 +1,27 @@
+import axios from "axios";
 import { PencilOff, Trash } from "lucide-react";
-import React from "react";
-import { useLoaderData } from "react-router";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useLoaderData } from "react-router";
 
 const MyPostedJobs = () => {
   const data = useLoaderData();
-  const jobs = data.data;
-  console.log(jobs);
+  const [jobs,setJobs] = useState(data.data);
+  // console.log(jobs);
+
+  const handleDeleteJob =async(id)=>{
+    //  console.log(id);
+    await axios.delete(`${import.meta.env.VITE_API_KEY}/jobs/${id}`)
+    .then(data=>{
+        //  console.log(data.data);
+         if(data.data.deletedCount){
+             toast.success("Your deleted successfully.")
+         }
+         const remainingJob = jobs.filter(job=>job._id !==id);
+         setJobs(remainingJob);
+    })
+     
+  }
 
   return (
     <div>
@@ -94,7 +110,7 @@ const MyPostedJobs = () => {
 
                      <td>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {` $${job.minPrice} - $${job.maxPrice}`}
+                          {` $${job.minPrice} - $${job.maxPrice}`}
                     </p>
                      </td>
                      
@@ -106,18 +122,20 @@ const MyPostedJobs = () => {
 
                       <td className="px-4 py-4 text-sm whitespace-nowrap">
                         <div className="flex gap-x-2">
-                          {job.description.substring(0,10)}
+                          {job.description.substring(0,20)}
                         </div>
                       </td>
 
                       <td className="px-4 py-4 text-sm whitespace-nowrap">
                         <div className="flex gap-x-4">
-                          <button className="text-red-500 hover:text-red-700">
+                          <button onClick={()=>handleDeleteJob(job._id)} className="text-red-500 hover:text-red-700">
                             <Trash></Trash>
                           </button>
+                         <Link to={`/updateJob/${job._id}`}>
                           <button className="text-yellow-500 hover:text-yellow-600">
                             <PencilOff />
                           </button>
+                         </Link>
                         </div>
                       </td>
                     </tr>
