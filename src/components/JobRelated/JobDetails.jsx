@@ -1,20 +1,43 @@
-import React from 'react';
-import { useLoaderData } from 'react-router';
+import React,{useState} from 'react';
+import { Link, useLoaderData } from 'react-router';
 import useAuth from '../../hooks/useAuth';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const JobDetails = () => {
+  const [startDate, setStartDate] = useState(new Date());
     const jobData = useLoaderData();
     const job = jobData.data;
     const {user} = useAuth();
-    const {jobtitle,deadline,description,category,max_range,min_range} = job || {};
+    const {_id,title,deadline,description,category,maxPrice,minPrice,buyer_email} = job || {};
 
     const handleABid=(e)=>{
+      if(user?.email === buyer_email) return toast.error("Action not permited.")
         e.preventDefault();
         const form= e.target;
-        const formData = new FormData(form);
-        // const {price,comment,...rest} = Object.fromEntries(formData.entries());
-        const data = Object.fromEntries(formData.entries());
-        console.log(data);
+        const jobId = _id
+        const price= parseFloat(form.price.value)
+        if(price<parseFloat(minPrice)) return toast.error("More the price.")
+        const comment= form.comment.value
+        const deadline = startDate;
+        const email = user?.email
+        const status = "pending"
+        const bidData ={
+          jobId,price,buyer_email,comment,email,status,deadline
+        }
+        
+        axios.post(`${import.meta.env.VITE_API_KEY}/bids`,bidData)
+        .then(data=>{
+          if(data.data.insertedId){
+            toast.success("Bids added Successfully.")
+          }
+        }).catch(error=>{
+          if(error){
+            toast.error("Something went wrong!")
+          }
+    })
         
     }
     return (
@@ -23,7 +46,7 @@ const JobDetails = () => {
       <div className='flex-1  px-4 py-7 bg-white rounded-md shadow-md md:min-h-[350px]'>
         <div className='flex items-center justify-between'>
           <span className='text-sm font-light text-gray-800 '>
-            Deadline: {deadline}
+            Deadline: {new Date(deadline).toLocaleDateString()}
           </span>
           <span className='px-4 py-1 text-xs text-blue-800 uppercase bg-blue-200 rounded-full '>
             {category}
@@ -32,7 +55,7 @@ const JobDetails = () => {
 
         <div>
           <h1 className='mt-2 text-3xl font-semibold text-gray-800 '>
-            {jobtitle}
+            {title}
           </h1>
 
           <p className='mt-2 text-lg text-gray-600 '>
@@ -53,7 +76,7 @@ const JobDetails = () => {
             </div>
           </div>
           <p className='mt-6 text-lg font-bold text-gray-600 '>
-            Range: ${min_range} - ${max_range}
+            Range: ${minPrice} - ${maxPrice}
           </p>
         </div>
       </div>
@@ -106,16 +129,21 @@ const JobDetails = () => {
               <label className='text-gray-700'>Deadline</label>
 
               {/* Date Picker Input Field */}
+             <div className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md   focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'>
+               <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+             </div>
             </div>
           </div>
 
           <div className='flex justify-end mt-6'>
+            <Link to={`/bids/${_id}`}>
             <button
               type='submit'
               className='px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600'
             >
               Place Bid
             </button>
+            </Link>
           </div>
         </form>
       </section>

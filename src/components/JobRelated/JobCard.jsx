@@ -2,12 +2,12 @@ import React from 'react';
 import { Link } from 'react-router';
 
 const JobCard = ({job}) => {
-  const {_id,jobtitle,deadline,description,category,max_range,min_range} = job || {};
+  const {_id,title,deadline,description,category,maxPrice,minPrice} = job || {};
     return (
     <Link to={`/jobs/${_id}`} className='w-full max-w-sm px-4 py-3 bg-white rounded-md shadow-md hover:scale-[1.05] transition-all'>
       <div className='flex items-center justify-between'>
         <span className='text-xs font-light text-gray-800 '>
-          Deadline: {deadline}
+          Deadline: {new Date(deadline).toLocaleDateString()}
         </span>
         <span className='px-3 py-1 text-[8px] text-blue-800 uppercase bg-blue-200 rounded-full '>
           {category}
@@ -16,14 +16,14 @@ const JobCard = ({job}) => {
 
       <div>
         <h1 className='mt-2 text-lg font-semibold text-gray-800 '>
-          {jobtitle}
+          {title}
         </h1>
 
         <p className='mt-2 text-sm text-gray-600 '>
           {description}
         </p>
         <p className='mt-2 text-sm font-bold text-gray-600 '>
-          Range: ${min_range} - ${max_range}
+          Range: ${minPrice} - ${maxPrice}
         </p>
       </div>
     </Link>
