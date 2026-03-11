@@ -1,12 +1,14 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import useAuth from "../../hooks/useAuth";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import useAuth from '../../hooks/useAuth';
+import { MdDoNotDisturbAlt } from 'react-icons/md';
+import { Check } from 'lucide-react';
 
-const MyBids = () => {
+
+const Bid_Request = () => {
   const {user} = useAuth();
     const [bids,setBids] = useState([]);
 
-   
     useEffect(()=>{
       const getData =async()=>{
            const res = await axios(`${import.meta.env.VITE_API_KEY}/bid-request/${user?.email}`);
@@ -16,18 +18,17 @@ const MyBids = () => {
       }
       getData();
     },[user])
-    
-    console.log(bids);
-    
-  return (
-    <section className="container px-4 mx-auto">
+  //  console.log(bids);
+   
+    return (
+         <section className="container px-4 mx-auto">
       <div className="flex items-center gap-x-3">
         <h2 className="text-lg font-medium text-gray-800 dark:text-white">
-          My Bids
+          Bid request
         </h2>
 
         <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-          100 users
+          {bids.length} bids
         </span>
       </div>
 
@@ -40,17 +41,21 @@ const MyBids = () => {
                   <tr>
                     <th className="py-3.5 px-4 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
                       <div className="flex items-center gap-x-3">
-                       <span>#</span>
+                        <span>#</span>
                         <span>Title</span>
                       </div>
                     </th>
 
                     <th className="px-12 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
+                     Email
+                    </th>
+
+                    <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
                       Deadline
                     </th>
 
                     <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
-                      price
+                      Price
                     </th>
 
                     <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
@@ -58,79 +63,69 @@ const MyBids = () => {
                     </th>
 
                     <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
-                      status
-                    </th>
-                    <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
-                      Action
+                      Status
                     </th>
 
-                    
+                    <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
+                     Action
+                    </th>
+
                   </tr>
                 </thead>
 
                 <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                  <tr>
+                 {
+                  bids.map((bid,index)=>
+                     <tr key={bid._id}>
                     <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                       <div className="inline-flex items-center gap-x-3">
-                        <input type="checkbox" className="rounded" />
+                        {index + 1}
 
                         <div className="flex items-center gap-x-2">
-                          <img
-                            className="object-cover w-10 h-10 rounded-full"
-                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde"
-                            alt=""
-                          />
-                          <div>
-                            <h2 className="font-medium text-gray-800 dark:text-white">
-                              Arthur Melo
-                            </h2>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              @authurmelo
-                            </p>
-                          </div>
+                       {
+                        bid.title
+                       }
                         </div>
                       </div>
                     </td>
 
                     <td className="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                      <span className="px-3 py-1 text-xs text-green-600 bg-green-100 rounded-full">
-                        Active
-                      </span>
+                       {
+                        bid.buyer_email
+                       }
                     </td>
 
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                      Design Director
+                     {new Date(bid.deadline).toLocaleDateString()}
                     </td>
 
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                      authurmelo@example.com
+                      ${bid.price}
                     </td>
 
                     <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <div className="flex gap-x-2">
-                        <span className="px-3 py-1 text-xs text-indigo-500 bg-indigo-100 rounded-full">
-                          Design
-                        </span>
-                        <span className="px-3 py-1 text-xs text-blue-500 bg-blue-100 rounded-full">
-                          Product
-                        </span>
-                        <span className="px-3 py-1 text-xs text-pink-500 bg-pink-100 rounded-full">
-                          Marketing
-                        </span>
-                      </div>
+                      {
+                        bid.category
+                      }
                     </td>
 
                     <td className="px-4 py-4 text-sm whitespace-nowrap">
                       <div className="flex gap-x-4">
-                        <button className="text-red-500 hover:text-red-700">
-                          Delete
+                       
+                        <button className={`${bid.status === "pending" && "badge badge-outline badge-error"} ${bid.status === "in-progress" && "badge badge-outline badge-success"} ${bid.status === "reject" && "badge badge-outline badge-info"}`}>
+                          {bid.status}
                         </button>
-                        <button className="text-yellow-500 hover:text-yellow-600">
-                          Edit
-                        </button>
+                      
+                       
                       </div>
                     </td>
+                    <td className='flex items-center space-x-2 mt-4'>
+                      <Check />
+                      <MdDoNotDisturbAlt size={25}></MdDoNotDisturbAlt>
+                    </td>
                   </tr>
+                  )
+                 }
                 </tbody>
               </table>
             </div>
@@ -138,7 +133,7 @@ const MyBids = () => {
         </div>
       </div>
     </section>
-  );
+    );
 };
 
-export default MyBids;
+export default Bid_Request;

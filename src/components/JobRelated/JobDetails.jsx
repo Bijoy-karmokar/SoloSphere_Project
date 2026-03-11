@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import { Link, useLoaderData } from 'react-router';
+import { Link, useLoaderData, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -7,39 +7,48 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const JobDetails = () => {
+  const navigate = useNavigate();
   const [startDate, setStartDate] = useState(new Date());
     const jobData = useLoaderData();
     const job = jobData.data;
     const {user} = useAuth();
     const {_id,title,deadline,description,category,maxPrice,minPrice,buyer_email} = job || {};
 
-    const handleABid=(e)=>{
-      if(user?.email === buyer_email) return toast.error("Action not permited.")
-        e.preventDefault();
-        const form= e.target;
-        const jobId = _id
-        const price= parseFloat(form.price.value)
-        if(price<parseFloat(minPrice)) return toast.error("More the price.")
-        const comment= form.comment.value
-        const deadline = startDate;
-        const email = user?.email
-        const status = "pending"
-        const bidData ={
-          jobId,price,buyer_email,comment,email,status,deadline
-        }
-        
-        axios.post(`${import.meta.env.VITE_API_KEY}/bids`,bidData)
-        .then(data=>{
-          if(data.data.insertedId){
-            toast.success("Bids added Successfully.")
-          }
-        }).catch(error=>{
-          if(error){
-            toast.error("Something went wrong!")
-          }
+    const handleABid = (e) => {
+  e.preventDefault();
+
+  if (user?.email === buyer_email) {
+    return toast.error("Action not permitted.");
+  }
+
+  const form = e.target;
+  const price = parseFloat(form.price.value);
+
+  if (price < parseFloat(minPrice)) {
+    return toast.error(`Bid must be at least $${minPrice}`);
+  }
+
+  const bidData = {
+    jobId: _id,
+    price,
+    buyer_email,
+    comment: form.comment.value,
+    email: user?.email,
+    status: "pending",
+    deadline: startDate,
+    title,
+    category
+  };
+
+  axios.post(`${import.meta.env.VITE_API_KEY}/bids`, bidData)
+    .then(res => {
+      if (res.data.insertedId) {
+        toast.success("Bid placed successfully!");
+        navigate('/my-bids');
+      }
     })
-        
-    }
+    .catch(() => toast.error("Something went wrong!"));
+};
     return (
     <div className='flex flex-col md:flex-row justify-around gap-5  items-center min-h-[calc(100vh-306px)] md:max-w-screen-xl mx-auto my-10'>
       {/* Job Details */}
@@ -136,14 +145,12 @@ const JobDetails = () => {
           </div>
 
           <div className='flex justify-end mt-6'>
-            <Link to={`/bids/${_id}`}>
             <button
               type='submit'
               className='px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600'
             >
               Place Bid
             </button>
-            </Link>
           </div>
         </form>
       </section>

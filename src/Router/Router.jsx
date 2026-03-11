@@ -10,6 +10,8 @@ import ErrorPage from "../Pages/ErrorPage";
 import AddJob from "../components/JobRelated/AddJob";
 import MyPostedJobs from "../components/JobRelated/MyPostedJobs";
 import UpdatePostedJob from "../components/JobRelated/UpdatePostedJob";
+import Bid_Request from "../Pages/MyBids/Bid_Request";
+import PrivateRoute from './../components/Routes/PrivateRoute';
 
 
 const router = createBrowserRouter([
@@ -24,17 +26,17 @@ const router = createBrowserRouter([
             },
             {
                path:"/add-job",
-               Component:AddJob
+               element:<PrivateRoute><AddJob></AddJob></PrivateRoute>
             },
             {
                path:"/my-posted-jobs",
                loader:()=>axios(`${import.meta.env.VITE_API_KEY}/jobs`),
-               Component:MyPostedJobs
+               element:<PrivateRoute><MyPostedJobs></MyPostedJobs></PrivateRoute>
             },
             {
               path:"/updateJob/:id",
               loader:({params})=>axios(`${import.meta.env.VITE_API_KEY}/jobs/${params.id}`),
-              Component:UpdatePostedJob
+              element:<PrivateRoute><UpdatePostedJob></UpdatePostedJob></PrivateRoute>
             },
             {
                 path:"/login",
@@ -46,14 +48,18 @@ const router = createBrowserRouter([
             },
             {
                 path:"jobs/:jobId",
-                Component:JobDetails,
+                element:<PrivateRoute><JobDetails></JobDetails></PrivateRoute>,
                 loader:({params})=>axios(`${import.meta.env.VITE_API_KEY}/jobs/${params.jobId}`)
             },
             {
-                path:'bids/:bidId',
-                Component:MyBids,
-                loader:({params})=> axios(`${import.meta.env.VITE_API_KEY}/bids/${params.bidId}`)
+                path:'/my-bids',
+                element:<PrivateRoute><MyBids></MyBids></PrivateRoute>,
             },
+            {
+                path:'/bid-request',
+                element:<PrivateRoute><Bid_Request></Bid_Request></PrivateRoute>,
+            },
+
         ]
     }
 ])

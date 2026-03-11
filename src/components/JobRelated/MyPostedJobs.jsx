@@ -25,15 +25,14 @@ const MyPostedJobs = () => {
 
   return (
     <div>
-      <h3>My Posted Data :{jobs.length}</h3>
       <section className="container px-4 mx-auto">
         <div className="flex items-center gap-x-3">
           <h2 className="text-lg font-medium text-gray-800 dark:text-white">
-            Team members
+            My Posted Jobs
           </h2>
 
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            100 users
+            {jobs.length} jobs
           </span>
         </div>
 
@@ -71,7 +70,6 @@ const MyPostedJobs = () => {
                       <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
                         Action
                       </th>
-                      <th className="px-4 py-3.5" />
                     </tr>
                   </thead>
 
