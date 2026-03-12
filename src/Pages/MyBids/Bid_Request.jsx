@@ -1,27 +1,57 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import useAuth from '../../hooks/useAuth';
-import { MdDoNotDisturbAlt } from 'react-icons/md';
-import { Check } from 'lucide-react';
-
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import { MdDoNotDisturbAlt } from "react-icons/md";
+import { Check } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Bid_Request = () => {
-  const {user} = useAuth();
-    const [bids,setBids] = useState([]);
+  const { user } = useAuth();
+  const [bids, setBids] = useState([]);
 
-    useEffect(()=>{
-      const getData =async()=>{
-           const res = await axios(`${import.meta.env.VITE_API_KEY}/bid-request/${user?.email}`);
-          //  console.log(res);
-          setBids(res.data);
-           
-      }
-      getData();
-    },[user])
+  useEffect(() => {
+    const getData = async () => {
+      const res = await axios(
+        `${import.meta.env.VITE_API_KEY}/bid-request/${user?.email}`,
+      );
+      //  console.log(res);
+      setBids(res.data);
+    };
+    getData();
+  }, [user]);
   //  console.log(bids);
-   
-    return (
-         <section className="container px-4 mx-auto">
+
+  const handleStatus = async (id, prevStatus, newStatus) => {
+
+  if (prevStatus === newStatus) {
+    return toast.error("Status already set");
+  }
+
+  try {
+    const res = await axios.patch(
+      `${import.meta.env.VITE_API_KEY}/bids/${id}`,
+      { status: newStatus }
+    );
+
+    if (res.data.modifiedCount > 0) {
+      toast.success("Status updated");
+
+      // ✅ UI Update
+      const updatedBids = bids.map(bid =>
+        bid._id === id
+          ? { ...bid, status: { status: newStatus } }
+          : bid
+      );
+
+      setBids(updatedBids);
+    }
+
+  } catch (error) {
+    toast.error("Failed to update status");
+  }
+};
+  return (
+    <section className="container px-4 mx-auto">
       <div className="flex items-center gap-x-3">
         <h2 className="text-lg font-medium text-gray-800 dark:text-white">
           Bid request
@@ -47,7 +77,7 @@ const Bid_Request = () => {
                     </th>
 
                     <th className="px-12 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
-                     Email
+                      Email
                     </th>
 
                     <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
@@ -67,65 +97,73 @@ const Bid_Request = () => {
                     </th>
 
                     <th className="px-4 py-3.5 text-sm font-normal text-left text-gray-500 dark:text-gray-400">
-                     Action
+                      Action
                     </th>
-
                   </tr>
                 </thead>
 
                 <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                 {
-                  bids.map((bid,index)=>
-                     <tr key={bid._id}>
-                    <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                      <div className="inline-flex items-center gap-x-3">
-                        {index + 1}
+                  {bids.map((bid, index) => (
+                    <tr key={bid._id}>
+                      <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                        <div className="inline-flex items-center gap-x-3">
+                          {index + 1}
 
-                        <div className="flex items-center gap-x-2">
-                       {
-                        bid.title
-                       }
+                          <div className="flex items-center gap-x-2">
+                            {bid.title}
+                          </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                       {
-                        bid.buyer_email
-                       }
-                    </td>
+                      <td className="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                        {bid.buyer_email}
+                      </td>
 
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                     {new Date(bid.deadline).toLocaleDateString()}
-                    </td>
+                      <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        {new Date(bid.deadline).toLocaleDateString()}
+                      </td>
 
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                      ${bid.price}
-                    </td>
+                      <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        ${bid.price}
+                      </td>
 
-                    <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      {
-                        bid.category
-                      }
-                    </td>
+                      <td className="px-4 py-4 text-sm whitespace-nowrap">
+                        {bid.category}
+                      </td>
 
-                    <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <div className="flex gap-x-4">
-                       
-                        <button className={`${bid.status === "pending" && "badge badge-outline badge-error"} ${bid.status === "in-progress" && "badge badge-outline badge-success"} ${bid.status === "reject" && "badge badge-outline badge-info"}`}>
-                          {bid.status}
+                      <td className="px-4 py-4 text-sm whitespace-nowrap">
+                        <div className="flex gap-x-4">
+                          <span
+                            className={`badge badge-outline 
+  ${bid.status?.status === "pending" && "badge-error"}
+  ${bid.status?.status === "in-progress" && "badge-success"}
+  ${bid.status?.status === "rejected" && "badge-info"}`}
+                          >
+                            {bid.status?.status}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="flex items-center space-x-2 mt-4">
+                        <button
+                          onClick={() =>
+                            handleStatus(bid._id, bid.status?.status, "In-Progress")
+                          }
+                          disabled={bid.status === "complete"}
+                        >
+                          {" "}
+                          <Check />
                         </button>
-                      
-                       
-                      </div>
-                    </td>
-                    <td className='flex items-center space-x-2 mt-4'>
-                      <Check />
-                      <MdDoNotDisturbAlt size={25}></MdDoNotDisturbAlt>
-                    </td>
-                  </tr>
-                  )
-                 }
+                        <button
+                          onClick={() =>
+                            handleStatus(bid._id, bid.status?.status, "Reject")
+                          }
+                          disabled={bid.status === "complete"}
+                        >
+                          <MdDoNotDisturbAlt size={25}></MdDoNotDisturbAlt>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -133,7 +171,7 @@ const Bid_Request = () => {
         </div>
       </div>
     </section>
-    );
+  );
 };
 
 export default Bid_Request;
